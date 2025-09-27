@@ -52,6 +52,4 @@ The **Smart Tutor** is an innovative educational platform designed for children 
 ## Contributing
 Contributions are welcome! Please submit pull requests or open issues for bugs, features, or improvements.
 
-## License
-This project is licensed under the MIT License.
 
