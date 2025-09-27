@@ -1,0 +1,25 @@
+service: lesson-api   # name of your service
+
+provider:
+  name: aws
+  runtime: java21     # or java17 if you’re using Java 17
+  region: us-east-2
+  memorySize: 1024
+  timeout: 30
+  stage: dev
+
+functions:
+  lessonApi:
+    handler: com.future.smarttutorbackend.LambdaHandler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-java-maven
+
+custom:
+  javaMaven:
+    buildDir: target
+    buildArtifact: smart-tutor-backend-0.0.1-SNAPSHOT-aws.jar   # replace with your actual JAR artifact
