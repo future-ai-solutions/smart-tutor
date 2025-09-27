@@ -1,0 +1,33 @@
+{
+    "title": "example",
+    "content": "example content for Omar",
+    "imageUrl": "http://example",
+    "lessonAudioUrl": "http://example",
+    "encourageAudioUrl": "http://example",
+    "quiz": {
+        "questions": [
+            {
+                "statement": "example",
+                "choices": [
+                    "example",
+                    "example",
+                    "example",
+                    "example"
+                ],
+                "answer": "a",
+                "questionAudioUrl": "example"
+            },
+            {
+                "statement": "example",
+                "choices": [
+                    "example",
+                    "example",
+                    "example",
+                    "example"
+                ],
+                "answer": "example",
+                "questionAudioUrl": "example"
+            }
+        ]
+    }
+}
