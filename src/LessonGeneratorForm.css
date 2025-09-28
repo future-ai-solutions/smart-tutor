@@ -1,0 +1,278 @@
+/* src/LessonGeneratorForm.css */
+
+/* --- Overall Container & Background --- */
+.form-container {
+    width: 1200px; 
+    height: 700px;
+    margin: 40px auto;
+    padding: 50px; 
+    background-color: rgba(227, 216, 216, 0.95); /* Slightly transparent white */
+    border-radius: 70px; 
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 0 0 8px rgba(255, 255, 255, 0.1);
+    font-family: 'Cairo', sans-serif; 
+    text-align: right;
+    direction: rtl; /* Essential for RTL */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden; /* To contain background elements */
+    background-image: linear-gradient(to bottom, #2A62C6, #1A4D9B); 
+    color: #206b99; 
+}
+
+
+.bg-pyramid-bottom, .bg-star-top-right, .bg-star-bottom-left, .bg-star-mid-right {
+    position: absolute;
+    opacity: 0.5;
+    pointer-events: none; 
+}
+
+.bg-pyramid-bottom {
+    bottom: -170px;
+    left: 200px;
+    right: 200px;
+    width: 100%;
+    height: 700px; /* Adjust height as needed */
+    /* Ensure pyramids-pattern.png is in your public folder */
+    background-image: url('/public/pyramids-pattern.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+
+.bg-star-top-right {
+    top: 20px;
+    right: 20px;
+    font-size: 2em;
+    color: #FFD700;
+}
+
+.bg-star-bottom-left {
+    bottom: 50px;
+    left: 30px;
+    font-size: 1.5em;
+    color: #FFD700;
+    transform: rotate(20deg);
+}
+
+.bg-star-mid-right {
+    top: 50%;
+    right: 10%;
+    font-size: 1.2em;
+    color: #FFD700;
+    opacity: 0.1;
+}
+
+/* --- Genie Assistant --- */
+.genie-assistant {
+    position: absolute;
+    top: 80px; 
+    right: -10px; 
+    z-index: 10; 
+    text-align: center;
+}
+
+.genie-image {
+    width: 250px; 
+    height: auto;
+    bottom: -100px;
+    filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.4)); 
+}
+
+.greeting-bubble {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    background-color: #5D9CEC; /* Genie's light blue */
+    color: white;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    white-space: nowrap;
+}
+
+/* --- Form Title --- */
+.form-title {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #FFD700; /* Bright Yellow for title */
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
+    line-height: 1.3;
+}
+
+/* --- Lesson Form --- */
+.lesson-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    position: relative;
+    z-index: 20; 
+    padding-right: 160px; 
+}
+
+/* --- Input Groups --- */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #FFFFFF; 
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.text-input {
+    padding: 14px 20px;
+    border: none; 
+    border-radius: 15px; 
+    font-size: 1.1em;
+    background-color: rgba(255, 255, 255, 0.9); 
+    color: #333;
+    direction: rtl;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); 
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.text-input.focused { 
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 0 0 3px #5D9CEC; 
+}
+
+.large-input {
+    min-height: 60px;
+}
+
+/* --- Customization Options Grid --- */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid for options */
+    gap: 20px;
+    align-items: center;
+    padding: 15px 0;
+    background-color: rgba(0,0,0,0.2); 
+    border-radius: 15px;
+    padding-right: 20px; 
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
+    color: #FFFFFF; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- Custom Checkbox Styling --- */
+.custom-checkbox-label {
+    position: relative;
+    padding-right: 35px; /* Space for custom checkbox indicator */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    margin-right: 15px; 
+}
+
+.custom-checkbox-input {
+    /* Hide default checkbox */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.custom-checkbox-indicator {
+    position: absolute;
+    right: 0;
+    height: 24px;
+    width: 24px;
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 8px; /* Rounded square */
+    transition: background-color 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-checkbox-indicator.checked {
+    background-color: #FFD700; 
+    border-color: #F99D1C;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
+}
+
+.custom-checkbox-icon {
+    color: #2A62C6; 
+    font-size: 1.2em;
+    visibility: hidden;
+    transition: visibility 0.2s ease;
+}
+
+.custom-checkbox-icon.checked-icon {
+    visibility: visible;
+}
+
+.checkbox-icon { /* Shared icon styles next to checkbox text */
+    font-size: 1.4em;
+    margin-left: 10px; 
+    color: #FFD700; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- Number of Questions Spinner --- */
+.spinner-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spinner-label {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.num-questions-select {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 1em;
+    color: #333;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+/* --- Generate Button --- */
+.generate-button {
+    background-color: #F99D1C; 
+    color: white;
+    border: none;
+    padding: 18px 25px;
+    border-radius: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 8px 20px rgba(249, 157, 28, 0.5); 
+    margin-top: 30px;
+    letter-spacing: 0.5px;
+    outline: none;
+}
+
+.generate-button:hover {
+    background-color: #E08C1A;
+    transform: translateY(-2px); 
+    box-shadow: 0 12px 25px rgba(249, 157, 28, 0.6);
+}

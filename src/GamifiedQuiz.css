@@ -1,0 +1,130 @@
+/* src/GamifiedQuiz.css (Only new/modified styles) */
+/* .quiz-container inherits main background styles */
+.quiz-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    direction: rtl;
+    position: relative;
+    overflow: hidden;
+    color: #FFFFFF;
+}
+
+.quiz-content-area {
+    padding: 10px;
+}
+
+.quiz-question-text {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    line-height: 1.4;
+}
+
+.quiz-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+/* Options Grid Layout */
+.options-grid-quiz {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    flex-grow: 1; 
+}
+
+.option-button {
+    background-color: #e59635; 
+    color: white;
+    padding: 20px 15px;
+    border-radius: 15px;
+    border: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Neon Glow Feedback Styles */
+.option-button.correct, .option-button.correct-reveal {
+    background-color: #4CAF50; 
+    box-shadow: 0 0 15px #4CAF50, 0 0 25px #4CAF50; /* Neon glow */
+}
+
+.option-button.incorrect {
+    background-color: #FF5722; 
+    box-shadow: 0 0 15px #FF5722, 0 0 25px #FF5722;
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+/* Genie Assistant for Quiz */
+.genie-quiz-assistant {
+    width: 200px;
+    text-align: center;
+    position: relative;
+}
+
+.genie-image-small {
+    width: 100%;
+    filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.4));
+}
+
+.feedback-bubble {
+    position: absolute;
+    top: -20px;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #5D9CEC;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px 20px 20px 5px; /* Speech bubble shape */
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    min-width: 180px;
+}
+
+.feedback-bubble.correct { background-color: #4CAF50; } /* Green for correct feedback */
+.feedback-bubble.incorrect { background-color: #FF5722; } /* Red for incorrect feedback */
+
+/* Footer/Gamification */
+.quiz-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.star-points {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.hint-button {
+    background-color: #5D9CEC;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}

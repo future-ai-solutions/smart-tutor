@@ -1,0 +1,107 @@
+/* src/LessonDisplay.css (Only new/modified styles) */
+/* .lesson-container inherits many styles from .form-container but is adjusted for content display */
+.lesson-container {
+    /* Inherit the overall glass-morphism blue theme and rounded corners */
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    direction: rtl;
+    position: relative;
+    overflow: hidden;
+    color: #FFFFFF; /* White text for contrast */
+}
+
+.screen-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: #FFD700;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+}
+
+/* Main Content Box Styling (The white/light background for readability) */
+.content-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* Genie is inside, so content might need padding */
+    padding-left: 200px; 
+}
+
+.genie-assistant-lesson {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    text-align: center;
+    z-index: 10;
+}
+
+.lesson-content {
+    color: #333; /* Dark text on white background */
+    font-size: 1.15em;
+    line-height: 1.8;
+}
+
+.lesson-text {
+    margin-top: 15px;
+}
+
+.lesson-image-container {
+    max-width: 40%;
+    margin: 0 auto 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lesson-image {
+    width: 100%;
+    display: block;
+}
+
+.audio-controls {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.audio-play-button {
+    background-color: #5D9CEC; /* Light Blue Accent */
+    color: white;
+    padding: 10px 25px;
+    border-radius: 15px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Footer and Controls */
+.footer-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+.score-display {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.start-quiz-button {
+    /* Inherits .generate-button styles but ensures it's on the right */
+    align-self: flex-end;
+}
