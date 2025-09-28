@@ -15,7 +15,7 @@ import java.io.OutputStream;
 public class LambdaHandler implements RequestStreamHandler {
 
     // Reuse handler because it’s expensive to initialize Spring
-    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    private static final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
     static {
         try {
