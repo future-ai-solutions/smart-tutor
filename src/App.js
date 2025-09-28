@@ -73,80 +73,146 @@
 
 // src/App.js
 import React, { useState } from 'react';
-import './index.css'; // استيراد الأنماط العامة
+import './App.css';
 import LessonGeneratorForm from './LessonGeneratorForm';
 import LessonDisplay from './LessonDisplay';
 import GamifiedQuiz from './GamifiedQuiz';
-import { mockLessonData } from './MockData'; 
+import { mockLessonData } from '/mockData'; // تأكد إن ده لسه موجود كـ fallback
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('form'); 
-  const [lessonData, setLessonData] = useState(null); 
+  const [currentScreen, setCurrentScreen] = useState('form');
+  const [lessonData, setLessonData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // 1. استيراد الـ API Base URL من Environment Variables
+  const API_BASE_URL = 'https://4m28j5x4d8.execute-api.us-west-2.amazonaws.com/dev'
+
+
   const handleGenerateLesson = async (formData) => {
-    setLoading(true);
-    setError(null);
-    try {
-     
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay (2 seconds)
-      
-     
-      const data = { 
-          ...mockLessonData, 
-          formData: formData, 
-          lesson: { 
-              ...mockLessonData.lesson,
-              title: formData.topic || mockLessonData.lesson.title,
-              text: `أهلاً بك يا ${formData.childName || 'صديقنا'} في رحلة شيقة حول موضوع ${formData.topic || 'معلومات جديدة'}! ${mockLessonData.lesson.text}` 
-          }
-      };
+      setLoading(true);
+      setError(null);
 
-      setLessonData(data); 
-      setCurrentScreen('lesson'); 
-
-    } catch (e) {
-      setError(`Failed to simulate lesson generation: ${e.message}`);
-      console.error("Error simulating lesson:", e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  
-  const handleSubmitAnswer = async (answerPayload) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
-
-      let newScore = lessonData.currentScore || 0;
-      if (answerPayload.isCorrect) {
-          newScore += 10; 
+      if (!API_BASE_URL) {
+          console.warn("Backend API URL is not set. Using mock data for generateLesson.");
+          await new Promise(resolve => setTimeout(resolve, 1500)); // محاكاة تأخير
+          const mockDataWithFormData = {
+              ...mockLessonData,
+              formData: formData,
+              lesson: {
+                  ...mockLessonData.lesson,
+                  title: `درس عن ${formData.topic}`,
+                  text: `مرحباً يا ${formData.childName}! ${mockLessonData.lesson.text}`
+              },
+             
+          };
+          setLessonData(mockDataWithFormData);
+          setCurrentScreen('lesson');
+          setLoading(false);
+          return;
       }
 
-      setLessonData(prevData => ({
-          ...prevData,
-          currentScore: newScore 
-      }));
-      
-      return { message: "Answer submitted (mock)", newScore: newScore };
-    } catch (e) {
-      console.error("Error simulating answer submission:", e);
-      setError(`Failed to simulate submit answer: ${e.message}`);
-      return null;
+      try {
+          
+          const response = await fetch(`${API_BASE_URL}/api/tutor/generate`, { 
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  childName: formData.childName,
+                  topic: formData.topic,
+                  numQuestions: formData.numQuestions,
+                  showImages: formData.showImages,
+                  enableAssistant: formData.enableAssistant
+              }),
+          });
+
+          if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+          }
+
+          const data = await response.json();
+          //expecting data to be in the format of mockLessonData but might need transformation
+          const transformedQuiz = data.quiz.questions.map(q => ({
+              questionId: q.questionId,
+              text: q.questionId, 
+              options: q.options,
+              ///transform correctAnswer to correctAnswerIndex
+              correctAnswerIndex: q.options.indexOf(q.correctAnswer), 
+              feedbackCorrect: q.feedbackCorrect,
+              feedbackIncorrect: "حاول مرة أخرى." 
+          }));
+
+          const formattedLessonData = {
+              sessionId: data.sessionId || "mock-session-id", 
+              lesson: {
+                  title: data.title || `درس عن ${formData.topic}`,
+                  text: data.text,
+                  imageUrl: data.imageUrl,
+                  audioUrl: data.audioUrl
+              },
+              quiz: transformedQuiz,
+              formData: formData, 
+              currentScore: 0,
+              initialLevel: 1
+          };
+
+          setLessonData(formattedLessonData);
+          setCurrentScreen('lesson');
+      } catch (e) {
+          setError(`Failed to generate lesson from API: ${e.message}`);
+          console.error("Error generating lesson:", e);
+      } finally {
+          setLoading(false);
+      }
+  };
+
+//mock function to simulate submitting answer to backend API
+  const handleSubmitAnswer = async (answerPayload) => {
+    if (!API_BASE_URL) {
+        console.warn("Backend API URL is not set. Simulating answer submission.");
+        await new Promise(resolve => setTimeout(resolve, 500));
+        let newScore = (lessonData?.currentScore || 0) + (answerPayload.isCorrect ? 10 : 0);
+        setLessonData(prevData => ({ ...prevData, currentScore: newScore }));
+        return { message: "Answer submitted (mock)", newScore: newScore };
     }
+
+    console.warn("Submit Answer API not yet implemented. Using mock logic.");
+    let newScore = (lessonData?.currentScore || 0) + (answerPayload.isCorrect ? 10 : 0);
+    setLessonData(prevData => ({ ...prevData, currentScore: newScore }));
+    return { message: "Answer submitted (mock) as Backend endpoint is not ready", newScore: newScore };
+
+    
+    /*
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/tutor/submit-answer`, { // مثال لـ path
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(answerPayload),
+        });
+        if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+        const data = await response.json(); // افترض بيرجع { newScore: 20 }
+        setLessonData(prevData => ({ ...prevData, currentScore: data.newScore }));
+        return data;
+    } catch (e) {
+        console.error("Error submitting answer to API:", e);
+        setError(`Failed to submit answer to API: ${e.message}`);
+        return null;
+    }
+    */
   };
 
   const handleQuizComplete = () => {
     alert('انتهى الاختبار! يمكنك الآن بدء مغامرة جديدة. 🎉');
-    setCurrentScreen('form'); 
-    setLessonData(null); 
+    setCurrentScreen('form');
+    setLessonData(null);
   };
 
   return (
     <div className="App" dir="rtl">
       {loading && <p className="loading-message">يتم تجهيز المغامرة...</p>}
-      {error && <p className="error-message">حدث خطأ في عرض البيانات الوهمية: {error}</p>}
+      {error && <p className="error-message">حدث خطأ: {error}</p>}
 
       {!loading && !error && (
         <>
@@ -154,14 +220,14 @@ function App() {
             <LessonGeneratorForm onGenerate={handleGenerateLesson} />
           )}
           {currentScreen === 'lesson' && lessonData && (
-            <LessonDisplay 
-              lessonData={lessonData} 
-              onStartQuiz={() => setCurrentScreen('quiz')} 
+            <LessonDisplay
+              lessonData={lessonData}
+              onStartQuiz={() => setCurrentScreen('quiz')}
             />
           )}
           {currentScreen === 'quiz' && lessonData && (
-            <GamifiedQuiz 
-              lessonData={lessonData} 
+            <GamifiedQuiz
+              lessonData={lessonData}
               onSubmitAnswer={handleSubmitAnswer}
               onQuizComplete={handleQuizComplete}
             />
