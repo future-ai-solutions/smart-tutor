@@ -15,6 +15,7 @@ public class Lesson {
     private String content;
 
     private String imageUrl;
+    @Lob
     private String audioUrl;
 
     public Lesson() {

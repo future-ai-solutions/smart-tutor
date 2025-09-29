@@ -8,7 +8,8 @@ import java.nio.charset.StandardCharsets;
 
 public enum SmartTutorPrompts {
 
-    CREATE_LESSON_CONTENT("/prompts/create-lesson-content-system-prompt.txt");
+    CREATE_LESSON_CONTENT("/prompts/create-lesson-content-system-prompt.txt"),
+    CREATE_LESSON_NARRATOR_TEXT("/prompts/create-lesson-narrator-text-system-prompt.txt");
 
     private final String fileName;
     private String content; // Field to store the file's content

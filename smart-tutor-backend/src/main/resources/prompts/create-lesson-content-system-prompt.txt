@@ -9,4 +9,4 @@ Response Requirements:
     content: The main lesson content in Arabic (Egyptian dialect), written simply and clearly for children aged 6–12.
 2. First line of the response contains only the lesson title, and starting from the second line will be the lesson content
 
-Final Output in text Format (Do not add anything except unlike the response requirement and format)
+Final Output in text Format (Do not add anything unlike the response requirement and its format)
