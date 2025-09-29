@@ -1,18 +1,28 @@
 package com.future.smarttutorbackend.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.future.smarttutorbackend.config.SmartTutorPrompts;
 import com.future.smarttutorbackend.model.Lesson;
 import com.future.smarttutorbackend.model.PromptRequest;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 
 @Service
 public class ClaudeChatService {
 
     private final ChatClient chatClient;
+    private final BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
 
-    public ClaudeChatService(ChatClient chatClient) {
+    public ClaudeChatService(ChatClient chatClient, BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
         this.chatClient = chatClient;
+        this.bedrockRuntimeAsyncClient = bedrockRuntimeAsyncClient;
     }
 
     public String generateLessonContent(PromptRequest promptRequest) {
@@ -24,14 +34,42 @@ public class ClaudeChatService {
     }
 
     public String generateLessonNarratorText(String content, String childName) {
-        return chatClient.prompt()
-                .system(SmartTutorPrompts.CREATE_LESSON_NARRATOR_TEXT.getSystemPrompt())
-                .user(content + "\n" + childName)
-                .call()
-                .content();
+        String MODEL_ID = "anthropic.claude-3-5-sonnet-20240620-v1:0";
+        JSONObject requestBody = getBedrockPayload(content, childName);
+        try {
+            var response = bedrockRuntimeAsyncClient.invokeModel(InvokeModelRequest.builder()
+                    .modelId(MODEL_ID)
+                    .body(SdkBytes.fromUtf8String(requestBody.toString()))
+                    .build()
+            );
+
+            String responseBody = response.get().body().asUtf8String();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode node = objectMapper.readTree(responseBody);
+            return node.get("content").get(0).get("text").asText();
+
+        } catch (Exception e) {
+            LoggerFactory.getLogger(ClaudeChatService.class).error("Error while serializing ClaudeRequest", e);
+            return null;
+        }
     }
 
+    private JSONObject getBedrockPayload(String content, String childName) {
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("anthropic_version", "bedrock-2023-05-31");
+        requestBody.put("max_tokens", 8192);
+        requestBody.put("temperature", 1);
+        requestBody.put("system", SmartTutorPrompts.CREATE_LESSON_NARRATOR_TEXT.getSystemPrompt());
 
+        // Create messages array
+        JSONArray messages = new JSONArray();
+        JSONObject message = new JSONObject();
+        message.put("role", "user");
+        message.put("content", content + "\n" + childName);
+        messages.put(message);
+        requestBody.put("messages", messages);
+        return requestBody;
+    }
 
     public String getQuestionContent(Lesson lesson) {
         return chatClient.prompt()
@@ -41,9 +79,6 @@ public class ClaudeChatService {
                 .content();
     }
 
-    public String getTest(Lesson lesson) {
-        return "test\n";
-    }
 
     public String generateLessonStableDiffusionPrompt(String title) {
         return chatClient.prompt()

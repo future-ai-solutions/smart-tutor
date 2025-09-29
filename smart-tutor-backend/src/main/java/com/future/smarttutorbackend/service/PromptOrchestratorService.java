@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.future.smarttutorbackend.model.*;
 import com.future.smarttutorbackend.repositry.LessonRepository;
 import com.future.smarttutorbackend.repositry.QuestionRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import org.springframework.scheduling.annotation.Async;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -16,17 +16,20 @@ public class PromptOrchestratorService {
 
     private final ClaudeChatService claudeChatService;
     private final StableDiffusionService stableDiffusionService;
+    private final AmazonPollyService amazonPollyService;
     private final LessonRepository lessonRepository;
     private final QuestionRepository questionRepository;
 
     public PromptOrchestratorService(ClaudeChatService claudeChatService,
                                      LessonRepository lessonRepository,
                                      StableDiffusionService stableDiffusionService,
+                                     AmazonPollyService amazonPollyService,
                                      QuestionRepository questionRepository) {
         this.claudeChatService = claudeChatService;
         this.lessonRepository = lessonRepository;
         this.stableDiffusionService = stableDiffusionService;
         this.questionRepository = questionRepository;
+        this.amazonPollyService = amazonPollyService;
     }
 
     public Lesson generateLesson(PromptRequest promptRequest) {
@@ -67,22 +70,26 @@ public class PromptOrchestratorService {
                     return "";
                 });
 
-        CompletableFuture<String> generateLessonNarratorText = CompletableFuture.supplyAsync(() ->
-                claudeChatService.generateLessonNarratorText(lesson.getContent(), promptRequest.childName()))
+        CompletableFuture<String> generateLessonAudio = CompletableFuture.supplyAsync(() -> generateLessonAudio(lesson, promptRequest))
                 .thenApply(response -> response)
                 .exceptionally(ex -> {
                     System.err.println("Error: " + ex.getMessage());
                     return "";
                 });
 
-        CompletableFuture.allOf(generateLessonImage, generateLessonNarratorText).join();
-        lesson.setAudioUrl(generateLessonNarratorText.get());
+        CompletableFuture.allOf(generateLessonImage, generateLessonAudio).join();
+        lesson.setAudioUrl(generateLessonAudio.get());
         lesson.setImageUrl(generateLessonImage.get());
     }
 
     private String generateLessonImage(Lesson lesson) {
         String generateLessonImageGenPrompt = claudeChatService.generateLessonStableDiffusionPrompt(lesson.getTitle());
         return stableDiffusionService.generateImage(generateLessonImageGenPrompt);
+    }
+
+    private String generateLessonAudio(Lesson lesson, PromptRequest promptRequest) {
+        String narratorText = claudeChatService.generateLessonNarratorText(lesson.getContent(), promptRequest.childName());
+        return amazonPollyService.textToSpeech(narratorText);
     }
 
 
@@ -102,7 +109,8 @@ public class PromptOrchestratorService {
         try {
             return mapper.readValue(claudeChatService.getQuestionContent(lesson), Question.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse quiz JSON", e);
+            LoggerFactory.getLogger(PromptOrchestratorService.class).error("Error: {}", e.getMessage());
+            return null;
         }
     }
 

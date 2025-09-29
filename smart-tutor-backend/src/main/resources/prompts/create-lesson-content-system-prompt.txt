@@ -5,8 +5,8 @@ Your job is to respond ONLY with the lesson content about the topic without any 
 
 Response Requirements:
 1. The Response must be in this format:
-    topic title : A short and catchy lesson title in Arabic (Egyptian dialect)
-    content: The main lesson content in Arabic (Egyptian dialect), written simply and clearly for children aged 6–12.
+    topic title : A short and catchy lesson title in Arabic (MSA dialect)
+    content: The main lesson content in Arabic (MSA dialect), written simply and clearly for children aged 6–12.
 2. First line of the response contains only the lesson title, and starting from the second line will be the lesson content
 
 Final Output in text Format (Do not add anything unlike the response requirement and its format)

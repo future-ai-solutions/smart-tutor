@@ -12,12 +12,8 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
-import java.time.Duration;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -73,16 +69,6 @@ public class StableDiffusionService {
                 RequestBody.fromBytes(imageBytes)
         );
 
-        S3Presigner preSigner = S3Presigner.create();
-        GetObjectRequest getReq = GetObjectRequest.builder()
-                .bucket(bucketName).key(key).build();
-        GetObjectPresignRequest preSignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofHours(24))
-                .getObjectRequest(getReq)
-                .build();
-        String preSignedUrl = preSigner.presignGetObject(preSignRequest).url().toString();
-        preSigner.close();
-
-        return preSignedUrl;
+        return S3Service.getPreSignedUrl(bucketName, key);
     }
 }
