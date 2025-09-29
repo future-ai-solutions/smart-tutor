@@ -1,0 +1,6 @@
+aws:
+  region: us-west-2       # Replace with your Bedrock-supported region
+  s3:
+    bucket-name: smart-tutor-bedrock-images
+  bedrock:
+    model-id: stability.sd3-5-large-v1:0

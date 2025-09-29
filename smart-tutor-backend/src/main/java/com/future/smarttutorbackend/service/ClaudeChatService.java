@@ -1,7 +1,6 @@
 package com.future.smarttutorbackend.service;
 
 import com.future.smarttutorbackend.config.SmartTutorPrompts;
-import com.future.smarttutorbackend.model.Lesson;
 import com.future.smarttutorbackend.model.PromptRequest;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ public class ClaudeChatService {
         this.chatClient = chatClient;
     }
 
-    public String getLessonContent(PromptRequest promptRequest) {
+    public String generateLessonContent(PromptRequest promptRequest) {
         return chatClient.prompt()
                 .system(SmartTutorPrompts.CREATE_LESSON_CONTENT.getSystemPrompt())
                 .user(promptRequest.prompt())
@@ -23,7 +22,7 @@ public class ClaudeChatService {
                 .content();
     }
 
-    public String getLessonNarratorText(String content, String childName) {
+    public String generateLessonNarratorText(String content, String childName) {
         return chatClient.prompt()
                 .system(SmartTutorPrompts.CREATE_LESSON_NARRATOR_TEXT.getSystemPrompt())
                 .user(content + "\n" + childName)
@@ -31,9 +30,14 @@ public class ClaudeChatService {
                 .content();
     }
 
-    public String getTest(Lesson lesson) {
-        return "test\n";
+    public String generateLessonStableDiffusionPrompt(String title) {
+        return chatClient.prompt()
+                .system(SmartTutorPrompts.CREATE_LESSON_IMAGE_GEN_PROMPT.getSystemPrompt())
+                .user(title)
+                .call()
+                .content();
     }
+
 
 
 

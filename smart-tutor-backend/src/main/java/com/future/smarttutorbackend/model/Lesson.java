@@ -14,6 +14,7 @@ public class Lesson {
     @Lob
     private String content;
 
+    @Lob
     private String imageUrl;
     @Lob
     private String audioUrl;

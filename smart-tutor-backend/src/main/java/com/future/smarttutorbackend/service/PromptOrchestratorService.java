@@ -12,11 +12,15 @@ import java.util.concurrent.ExecutionException;
 public class PromptOrchestratorService {
 
     private final ClaudeChatService claudeChatService;
+    private final StableDiffusionService stableDiffusionService;
     private final LessonRepository lessonRepository;
 
-    public PromptOrchestratorService(ClaudeChatService claudeChatService, LessonRepository lessonRepository) {
+    public PromptOrchestratorService(ClaudeChatService claudeChatService,
+                                     LessonRepository lessonRepository,
+                                     StableDiffusionService stableDiffusionService) {
         this.claudeChatService = claudeChatService;
         this.lessonRepository = lessonRepository;
+        this.stableDiffusionService = stableDiffusionService;
     }
 
     public Lesson generateLesson(PromptRequest promptRequest) {
@@ -36,7 +40,7 @@ public class PromptOrchestratorService {
     }
 
     private void generateLessonContent(Lesson lesson, PromptRequest promptRequest) {
-        String claudeChatResponse = claudeChatService.getLessonContent(promptRequest);
+        String claudeChatResponse = claudeChatService.generateLessonContent(promptRequest);
         int newlineIndex = claudeChatResponse.indexOf('\n');
         if (newlineIndex != -1) {
             lesson.setTitle(claudeChatResponse.substring(0, newlineIndex).trim());
@@ -47,9 +51,9 @@ public class PromptOrchestratorService {
         }
     }
 
-    public void generateLessonMedia(Lesson lesson, PromptRequest promptRequest) throws ExecutionException, InterruptedException {
+    private void generateLessonMedia(Lesson lesson, PromptRequest promptRequest) throws ExecutionException, InterruptedException {
 
-        CompletableFuture<String> generateTest = CompletableFuture.supplyAsync(() -> claudeChatService.getTest(lesson))
+        CompletableFuture<String> generateLessonImage = CompletableFuture.supplyAsync(() -> generateLessonImage(lesson))
                 .thenApply(response -> response)
                 .exceptionally(ex -> {
                     System.err.println("Error: " + ex.getMessage());
@@ -57,17 +61,21 @@ public class PromptOrchestratorService {
                 });
 
         CompletableFuture<String> generateLessonNarratorText = CompletableFuture.supplyAsync(() ->
-                claudeChatService.getLessonNarratorText(lesson.getContent(), promptRequest.childName()))
+                claudeChatService.generateLessonNarratorText(lesson.getContent(), promptRequest.childName()))
                 .thenApply(response -> response)
                 .exceptionally(ex -> {
                     System.err.println("Error: " + ex.getMessage());
                     return "";
                 });
 
-        CompletableFuture.allOf(generateTest, generateLessonNarratorText).join();
+        CompletableFuture.allOf(generateLessonImage, generateLessonNarratorText).join();
         lesson.setAudioUrl(generateLessonNarratorText.get());
-        lesson.setImageUrl(generateTest.get());
+        lesson.setImageUrl(generateLessonImage.get());
     }
 
+    private String generateLessonImage(Lesson lesson) {
+        String generateLessonImageGenPrompt = claudeChatService.generateLessonStableDiffusionPrompt(lesson.getTitle());
+        return stableDiffusionService.generateImage(generateLessonImageGenPrompt);
+    }
 
 }
