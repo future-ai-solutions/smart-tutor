@@ -11,7 +11,8 @@ public enum SmartTutorPrompts {
     CREATE_LESSON_CONTENT("/prompts/create-lesson-content-system-prompt.txt"),
     CREATE_LESSON_NARRATOR_TEXT("/prompts/create-lesson-narrator-text-system-prompt.txt"),
     CREATE_LESSON_IMAGE_GEN_PROMPT("/prompts/create-lesson-image-gen-prompt-system-prompt.txt"),
-    STABLE_DIFFUSION_NEGATIVE_PROMPT("/prompts/stable-diffusion-negative-prompt.txt"),;
+    STABLE_DIFFUSION_NEGATIVE_PROMPT("/prompts/stable-diffusion-negative-prompt.txt"),
+    CREATE_QUESTION("/prompts/create-question-system-prompt.txt");
 
     private final String fileName;
     private String content; // Field to store the file's content

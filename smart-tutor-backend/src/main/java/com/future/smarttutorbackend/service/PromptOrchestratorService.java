@@ -1,9 +1,12 @@
 package com.future.smarttutorbackend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.future.smarttutorbackend.model.*;
 import com.future.smarttutorbackend.repositry.LessonRepository;
+import com.future.smarttutorbackend.repositry.QuestionRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.scheduling.annotation.Async;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -14,13 +17,16 @@ public class PromptOrchestratorService {
     private final ClaudeChatService claudeChatService;
     private final StableDiffusionService stableDiffusionService;
     private final LessonRepository lessonRepository;
+    private final QuestionRepository questionRepository;
 
     public PromptOrchestratorService(ClaudeChatService claudeChatService,
                                      LessonRepository lessonRepository,
-                                     StableDiffusionService stableDiffusionService) {
+                                     StableDiffusionService stableDiffusionService,
+                                     QuestionRepository questionRepository) {
         this.claudeChatService = claudeChatService;
         this.lessonRepository = lessonRepository;
         this.stableDiffusionService = stableDiffusionService;
+        this.questionRepository = questionRepository;
     }
 
     public Lesson generateLesson(PromptRequest promptRequest) {
@@ -36,6 +42,7 @@ public class PromptOrchestratorService {
         }
         /* Generate the audio and image */
 
+        generateQuestions(promptRequest.numberOfQuestions(), lesson); //To generate the questions and save them until we need the quiz
         return lessonRepository.save(lesson);
     }
 
@@ -76,6 +83,27 @@ public class PromptOrchestratorService {
     private String generateLessonImage(Lesson lesson) {
         String generateLessonImageGenPrompt = claudeChatService.generateLessonStableDiffusionPrompt(lesson.getTitle());
         return stableDiffusionService.generateImage(generateLessonImageGenPrompt);
+    }
+
+
+    public void generateQuestions(int numberOfQuestions, Lesson lesson) {
+        CompletableFuture.runAsync(() -> {
+            for (long i = 0; i < numberOfQuestions; i++) {
+                Question question = generateQuestion(lesson);
+                QuestionID questionId = new QuestionID(lesson.getId(), i);
+                question.setId(questionId);
+                questionRepository.save(question);
+            }
+        });
+    }
+
+    public Question generateQuestion(Lesson lesson) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(claudeChatService.getQuestionContent(lesson), Question.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse quiz JSON", e);
+        }
     }
 
 }
