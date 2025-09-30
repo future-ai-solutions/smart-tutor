@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://master.d2tmo92ithtoc8.amplifyapp.com"
+})
 @RestController
 @RequestMapping("/api/tutor")
 public class SmartTutorController {
