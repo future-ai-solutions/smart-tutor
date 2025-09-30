@@ -1,7 +1,6 @@
-/* src/LessonDisplay.css (Only new/modified styles) */
+/* src/LessonDisplay.css (Optimized styles) */
 /* .lesson-container inherits many styles from .form-container but is adjusted for content display */
 .lesson-container {
-    /* Inherit the overall glass-morphism blue theme and rounded corners */
     max-width: 900px;
     margin: 40px auto;
     padding: 40px;
@@ -12,7 +11,7 @@
     direction: rtl;
     position: relative;
     overflow: hidden;
-    color: #FFFFFF; /* White text for contrast */
+    color: #FFFFFF;
 }
 
 .screen-title {
@@ -24,7 +23,6 @@
     text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
 }
 
-/* Main Content Box Styling (The white/light background for readability) */
 .content-box {
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -32,24 +30,72 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     min-height: 350px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Changed back to column */
+    align-items: center;
     position: relative;
-    /* Genie is inside, so content might need padding */
-    padding-left: 200px; 
+    gap: 25px;
+}
+
+.genie-image-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Genie container with speech bubble above */
+.genie-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 0px;
 }
 
 .genie-assistant-lesson {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    text-align: center;
-    z-index: 10;
+    width: 140px;
+    height: 200px; /* Taller oval shape */
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 25px rgba(93, 156, 236, 0.7);
+    animation: floatGenie 3s ease-in-out infinite alternate;
+    flex-shrink: 0;
+}
+
+.genie-video {
+    width: 200px;
+    height: 300px; /* Taller oval shape */
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(93, 156, 236, 0.7);
+    animation: floatGenie 3s ease-in-out infinite alternate;
+    display: block;
+    object-fit: cover;
+}
+
+.greeting-bubble-lesson { 
+     right: -100p;
+      left: auto; 
+      top: 55%;
+      transform: translateY(-50%);}
+
+@keyframes floatGenie {
+    from {
+        transform: translateY(0px);
+    }
+    to {
+        transform: translateY(-12px);
+    }
 }
 
 .lesson-content {
-    color: #333; /* Dark text on white background */
+    color: #333;
     font-size: 1.15em;
     line-height: 1.8;
+    width: 100%;
+    text-align: right;
 }
 
 .lesson-text {
@@ -57,8 +103,9 @@
 }
 
 .lesson-image-container {
-    max-width: 40%;
-    margin: 0 auto 20px;
+    max-width: 400px;
+    width: 100%;
+    margin: 20px auto;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -66,23 +113,33 @@
 
 .lesson-image {
     width: 100%;
+    height: auto;
     display: block;
 }
 
 .audio-controls {
     text-align: center;
     margin-top: 25px;
+    width: 100%;
 }
 
 .audio-play-button {
-    background-color: #5D9CEC; /* Light Blue Accent */
+    background-color: rgb(93, 156, 236);
     color: white;
-    padding: 10px 25px;
+    padding: 12px 30px;
     border-radius: 15px;
     border: none;
     font-weight: bold;
+    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(93, 156, 236, 0.3);
+}
+
+.audio-play-button:hover {
+    background-color: rgb(73, 136, 216);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(93, 156, 236, 0.4);
 }
 
 /* Footer and Controls */
@@ -95,13 +152,52 @@
 }
 
 .score-display {
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: bold;
     color: #FFD700;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
 .start-quiz-button {
-    /* Inherits .generate-button styles but ensures it's on the right */
-    align-self: flex-end;
+    background-color: #FFD700;
+    color: #333;
+    padding: 12px 30px;
+    border-radius: 15px;
+    border: none;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+}
+
+.start-quiz-button:hover {
+    background-color: #FFC700;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .greeting-bubble {
+        max-width: 250px;
+        white-space: normal;
+        font-size: 0.85em;
+        padding: 12px 20px;
+    }
+    
+    .genie-assistant-lesson,
+    .genie-video {
+        width: 120px;
+        height: 170px;
+    }
+    
+    .lesson-container {
+        padding: 20px;
+        margin: 20px;
+    }
+    
+    .lesson-content {
+        font-size: 1em;
+    }
 }

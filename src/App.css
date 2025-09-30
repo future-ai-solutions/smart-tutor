@@ -1,0 +1,157 @@
+/* src/App.css (Add or modify these styles) */
+
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1A4D9B; 
+    padding: 10px 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: #FFD700;
+    font-size: 1.1em;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 600;
+}
+
+.nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn.active {
+    background-color: #F99D1C; 
+    color: white;
+    box-shadow: 0 0 10px rgba(249, 157, 28, 0.5);
+}
+
+.current-points {
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 15px;
+}
+
+
+.points-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: right;
+    color: #333;
+}
+
+.points-title {
+    font-size: 2em;
+    color: #2A62C6; 
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.points-total {
+    color: #F99D1C;
+    font-size: 1.1em;
+}
+
+.points-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.item-card {
+    background-color: #FFFFFF;
+    border: 2px solid #EEE;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    border-color: #FFD700;
+}
+
+
+.item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s;
+}
+.item-icon {
+    font-size: 3em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.item-type {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.item-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.item-button.buy-ready {
+    background-color: #F99D1C; 
+    color: white;
+}
+
+.item-button.buy-ready:hover {
+    background-color: #E08C1A;
+    box-shadow: 0 5px 10px rgba(249, 157, 28, 0.4);
+}
+
+.item-button.buy-disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.item-button.unlocked {
+    background-color: #4CAF50;
+    color: white;
+    cursor: default;
+}
+
+.back-button {
+    background-color: #2A62C6; 
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 30px;
+    font-weight: 600;
+    cursor: pointer;
+}
