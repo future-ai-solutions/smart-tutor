@@ -6,7 +6,7 @@ import PointsTab from './PointsTab';
 import './App.css'; 
 import { mockLessonData } from './MockData'; 
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_API_BASE_URL || null; 
+const API_BASE_URL = "http://44.251.70.11:8080/api/tutor" || null; 
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('form');
@@ -83,7 +83,7 @@ function App() {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tutor/generate`, { 
+      const response = await fetch(`${API_BASE_URL}/generate-lesson`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -96,23 +96,25 @@ function App() {
 
       const data = await response.json();
       
-      // dealing with API response structure differences
-      const transformedQuiz = data.quiz.questions.map(q => ({
-          questionId: q.questionId,
-          text: q.questionId, 
-          options: q.options,
-          correctAnswerIndex: q.options.indexOf(q.correctAnswer), 
-          feedbackCorrect: q.feedbackCorrect,
-          feedbackIncorrect: "حاول مرة أخرى." 
-      }));
+      // // dealing with API response structure differences
+      // const transformedQuiz = data.quiz.questions.map(q => ({
+      //     questionId: q.questionId,
+      //     text: q.questionId, 
+      //     options: q.options,
+      //     correctAnswerIndex: q.options.indexOf(q.correctAnswer), 
+      //     feedbackCorrect: q.feedbackCorrect,
+      //     feedbackIncorrect: "حاول مرة أخرى." 
+      // }));
 
       const formattedLessonData = {
-          sessionId: data.sessionId || "api-session-id", 
-          lesson: data.lesson,
-          quiz: transformedQuiz,
+          sessionId: data.id || "api-session-id", 
+          title: data.title,
+          content: data.content,
           formData: formData, 
           currentScore: 0,
-          initialLevel: 1
+          initialLevel: 1,
+          imageUrl: data.imageUrl,
+          audioUrl: data.audioUrl
       };
 
       setLessonData(formattedLessonData);

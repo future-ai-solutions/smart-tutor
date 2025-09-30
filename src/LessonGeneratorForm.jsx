@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import './LessonGeneratorForm.css'; 
 
 const LessonGeneratorForm = ({ onGenerate }) => {
-  const [topic, setTopic] = useState('');
-  const [numQuestions, setNumQuestions] = useState(5);
+  const [prompt, setTopic] = useState('');
+  const [numberOfQuestions, setNumQuestions] = useState(5);
   const [showImages, setShowImages] = useState(true);
   const [enableAssistant, setEnableAssistant] = useState(true);
   const [childName, setChildName] = useState('');
@@ -13,15 +13,15 @@ const LessonGeneratorForm = ({ onGenerate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (topic.trim() === '') {
+    if (prompt.trim() === '') {
       alert('الرجاء إدخال الموضوع التعليمي أولاً.');
       return;
     }
     
     onGenerate({
-      topic,
+      prompt,
       childName,
-      numQuestions,
+      numberOfQuestions,
       showImages,
       enableAssistant,
     });
@@ -65,7 +65,7 @@ const LessonGeneratorForm = ({ onGenerate }) => {
             id="topic"
             type="text"
             placeholder="مثل: الحروف الأبجدية العربية أو الفراعنة"
-            value={topic}
+            value={prompt}
             onChange={(e) => setTopic(e.target.value)}
             className={`text-input large-input ${isTopicFocused ? 'focused' : ''}`}
             onFocus={() => setIsTopicFocused(true)}
@@ -115,7 +115,7 @@ const LessonGeneratorForm = ({ onGenerate }) => {
             <label htmlFor="numQuestions" className="spinner-label">عدد الأسئلة:</label>
             <select
               id="numQuestions"
-              value={numQuestions}
+              value={numberOfQuestions}
               onChange={(e) => setNumQuestions(Number(e.target.value))}
               className="num-questions-select"
             >
