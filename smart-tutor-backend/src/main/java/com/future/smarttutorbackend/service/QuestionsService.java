@@ -9,6 +9,8 @@ import com.future.smarttutorbackend.repositry.QuestionRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -27,9 +29,9 @@ public class QuestionsService {
         this.questionRepository = questionRepository;
     }
 
-    private Question generateQuestion(Lesson lesson, Long index) {
+    private Question generateQuestion(Lesson lesson, Long index, List<Question> previousQuestions) {
         Question question = new Question(new QuestionId(lesson.getId(), index));
-        String generatedJsonQuestion = claudeChatService.generateQuestionContent(lesson);
+        String generatedJsonQuestion = claudeChatService.generateNewQuestionContent(lesson, previousQuestions);
         if (generatedJsonQuestion == null) {
             return question;
         }
@@ -93,8 +95,10 @@ public class QuestionsService {
 
     public void generateQuestions(Lesson lesson, int numberOfQuestions) {
         CompletableFuture.runAsync(() -> {
+            List<Question> questions = new ArrayList<>();
             for (int i = 0; i < numberOfQuestions; i++) {
-                Question question = generateQuestion(lesson, (long) i);
+                Question question = generateQuestion(lesson, (long) i, questions);
+                questions.add(question);
                 questionRepository.save(question);
             }
         });

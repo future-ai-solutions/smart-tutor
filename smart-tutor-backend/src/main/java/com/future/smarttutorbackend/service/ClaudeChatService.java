@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.future.smarttutorbackend.config.SmartTutorPrompts;
 import com.future.smarttutorbackend.model.Lesson;
 import com.future.smarttutorbackend.model.PromptRequest;
+import com.future.smarttutorbackend.model.Question;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClaudeChatService {
@@ -83,8 +87,13 @@ public class ClaudeChatService {
                 .content();
     }
 
-    public String generateQuestionContent(Lesson lesson) {
-        return generateFromBedrockRuntime(SmartTutorPrompts.CREATE_QUESTION.getSystemPrompt(), lesson.getContent());
+    public String generateNewQuestionContent(Lesson lesson, List<Question> previousQuestions) {
+        String questions = previousQuestions.stream().map(Question::getQuestion).collect(Collectors.joining("\n"));
+        String userPrompt = """
+                Content: "%s"
+                Previously generated questions:
+                %s
+                """.formatted(lesson.getContent(), questions);
+        return generateFromBedrockRuntime(SmartTutorPrompts.CREATE_QUESTION.getSystemPrompt(), userPrompt);
     }
-
 }
