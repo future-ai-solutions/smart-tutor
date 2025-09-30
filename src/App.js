@@ -187,7 +187,7 @@ function App() {
               {currentScreen === 'quiz' && lessonData && (
                 <GamifiedQuiz
                   lessonData={lessonData}
-                  onSubmitAnswer={handleSubmitAnswer} // نمرر الدالة التي تسجل الإجابة وتزيد النقاط
+                  onSubmitAnswer={handleSubmitAnswer} 
                   onQuizComplete={handleQuizComplete}
                 />
               )}
