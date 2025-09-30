@@ -34,8 +34,12 @@ public class ClaudeChatService {
     }
 
     public String generateLessonNarratorText(String content, String childName) {
+        return generateFromBedrockRuntime(SmartTutorPrompts.CREATE_LESSON_NARRATOR_TEXT.getSystemPrompt(), content + "\n" + childName);
+    }
+
+    private String generateFromBedrockRuntime(String systemPrompt, String userPrompt) {
         String MODEL_ID = "anthropic.claude-3-5-sonnet-20240620-v1:0";
-        JSONObject requestBody = getBedrockPayload(content, childName);
+        JSONObject requestBody = getBedrockPayload(systemPrompt, userPrompt);
         try {
             var response = bedrockRuntimeAsyncClient.invokeModel(InvokeModelRequest.builder()
                     .modelId(MODEL_ID)
@@ -54,31 +58,22 @@ public class ClaudeChatService {
         }
     }
 
-    private JSONObject getBedrockPayload(String content, String childName) {
+    private JSONObject getBedrockPayload(String systemPrompt, String userPrompt) {
         JSONObject requestBody = new JSONObject();
         requestBody.put("anthropic_version", "bedrock-2023-05-31");
         requestBody.put("max_tokens", 8192);
         requestBody.put("temperature", 1);
-        requestBody.put("system", SmartTutorPrompts.CREATE_LESSON_NARRATOR_TEXT.getSystemPrompt());
+        requestBody.put("system", systemPrompt);
 
         // Create messages array
         JSONArray messages = new JSONArray();
         JSONObject message = new JSONObject();
         message.put("role", "user");
-        message.put("content", content + "\n" + childName);
+        message.put("content", userPrompt);
         messages.put(message);
         requestBody.put("messages", messages);
         return requestBody;
     }
-
-    public String getQuestionContent(Lesson lesson) {
-        return chatClient.prompt()
-                .system(SmartTutorPrompts.CREATE_QUESTION.getSystemPrompt())
-                .user(lesson.getContent())
-                .call()
-                .content();
-    }
-
 
     public String generateLessonStableDiffusionPrompt(String title) {
         return chatClient.prompt()
@@ -86,6 +81,10 @@ public class ClaudeChatService {
                 .user(title)
                 .call()
                 .content();
+    }
+
+    public String generateQuestionContent(Lesson lesson) {
+        return generateFromBedrockRuntime(SmartTutorPrompts.CREATE_QUESTION.getSystemPrompt(), lesson.getContent());
     }
 
 }

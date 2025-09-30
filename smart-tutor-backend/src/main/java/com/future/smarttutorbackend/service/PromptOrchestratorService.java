@@ -1,10 +1,7 @@
 package com.future.smarttutorbackend.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.future.smarttutorbackend.model.*;
 import com.future.smarttutorbackend.repositry.LessonRepository;
-import com.future.smarttutorbackend.repositry.QuestionRepository;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,18 +15,18 @@ public class PromptOrchestratorService {
     private final StableDiffusionService stableDiffusionService;
     private final AmazonPollyService amazonPollyService;
     private final LessonRepository lessonRepository;
-    private final QuestionRepository questionRepository;
+    private final QuestionsService questionsService;
 
     public PromptOrchestratorService(ClaudeChatService claudeChatService,
                                      LessonRepository lessonRepository,
                                      StableDiffusionService stableDiffusionService,
                                      AmazonPollyService amazonPollyService,
-                                     QuestionRepository questionRepository) {
+                                     QuestionsService questionsService) {
         this.claudeChatService = claudeChatService;
         this.lessonRepository = lessonRepository;
         this.stableDiffusionService = stableDiffusionService;
-        this.questionRepository = questionRepository;
         this.amazonPollyService = amazonPollyService;
+        this.questionsService = questionsService;
     }
 
     public Lesson generateLesson(PromptRequest promptRequest) {
@@ -37,16 +34,16 @@ public class PromptOrchestratorService {
 
         // Generate the title and content
         generateLessonContent(lesson, promptRequest);
+        lessonRepository.save(lesson);
 
-        // Generate the lesson narrator text (Should be concurrent with the image generation)
         try {
             generateLessonMedia(lesson, promptRequest);
         } catch (Exception ignored) {
         }
-        /* Generate the audio and image */
 
-        generateQuestions(promptRequest.numberOfQuestions(), lesson); //To generate the questions and save them until we need the quiz
-        return lessonRepository.save(lesson);
+        questionsService.generateQuestions(lesson, promptRequest.numberOfQuestions());
+
+        return lesson;
     }
 
     private void generateLessonContent(Lesson lesson, PromptRequest promptRequest) {
@@ -62,8 +59,7 @@ public class PromptOrchestratorService {
     }
 
     private void generateLessonMedia(Lesson lesson, PromptRequest promptRequest) throws ExecutionException, InterruptedException {
-
-        CompletableFuture<String> generateLessonImage = CompletableFuture.supplyAsync(() -> generateLessonImage(lesson))
+        CompletableFuture<String> generateLessonImage = CompletableFuture.supplyAsync(() -> generateLessonImage(lesson, promptRequest))
                 .thenApply(response -> response)
                 .exceptionally(ex -> {
                     System.err.println("Error: " + ex.getMessage());
@@ -82,36 +78,18 @@ public class PromptOrchestratorService {
         lesson.setImageUrl(generateLessonImage.get());
     }
 
-    private String generateLessonImage(Lesson lesson) {
+    private String generateLessonImage(Lesson lesson, PromptRequest promptRequest) {
+        if (!promptRequest.showImages())
+            return null;
         String generateLessonImageGenPrompt = claudeChatService.generateLessonStableDiffusionPrompt(lesson.getTitle());
         return stableDiffusionService.generateImage(generateLessonImageGenPrompt);
     }
 
     private String generateLessonAudio(Lesson lesson, PromptRequest promptRequest) {
+        if (!promptRequest.enableAssistant())
+            return null;
         String narratorText = claudeChatService.generateLessonNarratorText(lesson.getContent(), promptRequest.childName());
         return amazonPollyService.textToSpeech(narratorText);
-    }
-
-
-    public void generateQuestions(int numberOfQuestions, Lesson lesson) {
-        CompletableFuture.runAsync(() -> {
-            for (long i = 0; i < numberOfQuestions; i++) {
-                Question question = generateQuestion(lesson);
-                QuestionID questionId = new QuestionID(lesson.getId(), i);
-                question.setId(questionId);
-                questionRepository.save(question);
-            }
-        });
-    }
-
-    public Question generateQuestion(Lesson lesson) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(claudeChatService.getQuestionContent(lesson), Question.class);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(PromptOrchestratorService.class).error("Error: {}", e.getMessage());
-            return null;
-        }
     }
 
 }

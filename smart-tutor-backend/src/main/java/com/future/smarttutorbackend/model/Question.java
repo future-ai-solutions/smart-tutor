@@ -1,7 +1,6 @@
 package com.future.smarttutorbackend.model;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -9,37 +8,47 @@ import java.util.List;
 public class Question {
 
     @EmbeddedId
-    private QuestionID id;
-    private String statement;
+    private QuestionId id;
+
+    @Lob
+    private String question;
+
+    // Use ElementCollection for a simple list of values
+    @ElementCollection
     private List<String> choices;
-    private String answer;
+
+    private int answer;
+
+    @Lob
     private String questionAudioUrl;
+
+    @Lob
+    private String correctFeedbackAudioUrl;
+
+    @Lob
+    private String wrongFeedbackAudioUrl;
 
     public Question() {
     }
 
-    public Question(String statement, List<String> choices, String answer, String questionAudioUrl, QuestionID id) {
-        this.statement = statement;
-        this.choices = choices;
-        this.answer = answer;
-        this.questionAudioUrl = questionAudioUrl;
-        this.id = id;
+    public Question(QuestionId questionId) {
+        this.id = questionId;
     }
 
-    public QuestionID getId() {
+    public QuestionId getQuestionId() {
         return id;
     }
 
-    public void setId(QuestionID id) {
-        this.id = id;
+    public void setQuestionId(QuestionId questionId) {
+        this.id = questionId;
     }
 
-    public String getStatement() {
-        return statement;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setStatement(String statement) {
-        this.statement = statement;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public List<String> getChoices() {
@@ -50,11 +59,11 @@ public class Question {
         this.choices = choices;
     }
 
-    public String getAnswer() {
+    public int getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(int answer) {
         this.answer = answer;
     }
 
@@ -66,13 +75,19 @@ public class Question {
         this.questionAudioUrl = questionAudioUrl;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "statement='" + statement + '\'' +
-                ", choices=" + choices +
-                ", answer='" + answer + '\'' +
-                ", questionAudioUrl='" + questionAudioUrl + '\'' +
-                '}';
+    public String getCorrectFeedbackAudioUrl() {
+        return correctFeedbackAudioUrl;
+    }
+
+    public void setCorrectFeedbackAudioUrl(String correctFeedbackAudioUrl) {
+        this.correctFeedbackAudioUrl = correctFeedbackAudioUrl;
+    }
+
+    public String getWrongFeedbackAudioUrl() {
+        return wrongFeedbackAudioUrl;
+    }
+
+    public void setWrongFeedbackAudioUrl(String wrongFeedbackAudioUrl) {
+        this.wrongFeedbackAudioUrl = wrongFeedbackAudioUrl;
     }
 }

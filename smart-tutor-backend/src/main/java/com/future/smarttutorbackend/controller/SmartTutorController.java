@@ -1,8 +1,8 @@
 package com.future.smarttutorbackend.controller;
 
 import com.future.smarttutorbackend.model.*;
-import com.future.smarttutorbackend.repositry.QuestionRepository;
 import com.future.smarttutorbackend.service.PromptOrchestratorService;
+import com.future.smarttutorbackend.service.QuestionsService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -13,12 +13,12 @@ import org.springframework.http.HttpStatus;
 public class SmartTutorController {
 
     private final PromptOrchestratorService orchestratorService;
-    private final QuestionRepository questionRepository;
+    private final QuestionsService questionsService;
 
     public SmartTutorController(PromptOrchestratorService orchestratorService,
-                                QuestionRepository questionRepository) {
+                                QuestionsService questionsService) {
         this.orchestratorService = orchestratorService;
-        this.questionRepository = questionRepository;
+        this.questionsService = questionsService;
     }
 
     @PostMapping("/generate-lesson")
@@ -30,8 +30,7 @@ public class SmartTutorController {
     @GetMapping("/generate-question/{lessonId}/{questionIndex}")
     public Question getQuestions(@PathVariable Long lessonId,
                                      @PathVariable Long questionIndex) {
-
-        return questionRepository.findByIdLessonIdAndIdQuestionIndex(lessonId, questionIndex)
+        return questionsService.getQuestion(lessonId, questionIndex)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Question with id " + questionIndex + " not found"
                 ));

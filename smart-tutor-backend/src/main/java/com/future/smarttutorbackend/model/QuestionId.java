@@ -5,14 +5,14 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class QuestionID implements Serializable {
+public class QuestionId implements Serializable {
 
     private Long lessonId;
     private Long questionIndex;
 
-    public QuestionID() {}
+    public QuestionId() {}
 
-    public QuestionID(Long lessonId, Long questionIndex) {
+    public QuestionId(Long lessonId, Long questionIndex) {
         this.lessonId = lessonId;
         this.questionIndex = questionIndex;
     }
@@ -36,8 +36,8 @@ public class QuestionID implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof QuestionID)) return false;
-        QuestionID that = (QuestionID) o;
+        if (!(o instanceof QuestionId)) return false;
+        QuestionId that = (QuestionId) o;
         return Objects.equals(lessonId, that.lessonId) &&
                 Objects.equals(questionIndex, that.questionIndex);
     }
