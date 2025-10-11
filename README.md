@@ -1,5 +1,7 @@
 # Smart Tutor Platform
+#Presentation: https://gamma.app/docs/Smart-Tutor-Platform-zjb0ezf8dxlkcua?mode=present#card-6bec29vaayqfs9e
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/bbac222c-8975-48e7-b21d-41d2dc299d9b" />
+
 
 ## Overview
 The **Smart Tutor** is an innovative educational platform designed for children in the Arab world, leveraging Generative AI to create personalized, gamified learning experiences. Parents and educators input a topic via a text prompt, and the platform generates a tailored lesson, quiz, and feedback sequence, accompanied by an AI-powered cartoon companion that provides voice-based interaction in Arabic and its dialects.
