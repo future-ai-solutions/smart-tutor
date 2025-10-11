@@ -1,5 +1,6 @@
 # Smart Tutor Platform
 #Presentation: https://gamma.app/docs/Smart-Tutor-Platform-zjb0ezf8dxlkcua?mode=present#card-6bec29vaayqfs9e
+#Demo: https://drive.google.com/file/d/1xnKJD_shQSxkY5ucTlhb9HNDBCa6TlVW/view?usp=sharing
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/bbac222c-8975-48e7-b21d-41d2dc299d9b" />
 
 
